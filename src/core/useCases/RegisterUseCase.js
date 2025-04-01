@@ -6,10 +6,14 @@ class RegisterUseCase {
       this.authService = authService;
     }
   
+
+    
     async execute(userData) {
-      const requiredFields = ['email', 'password', 'name'];
+        console.log('RegisterUseCase execute called with:', userData);
+      const requiredFields = ['name', 'email', 'password'];
       const missingFields = requiredFields.filter(field => !userData[field]);
   
+      console.log("campos faltantes", missingFields)
       if (missingFields.length > 0) {
         throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
       }

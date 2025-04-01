@@ -6,21 +6,33 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid'); // Para generar UUID
 
 class AuthServiceImpl extends AuthService {
-  async register(userData) {
-    // Generar un UUID para el id del usuario
-    const id = uuidv4();
-    // Cifrar la contraseña
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    
-    // Insertar el usuario en la base de datos
-    await pool.query(
-      'INSERT INTO users (id, email, password, name) VALUES (?, ?, ?, ?)',
-      [id, userData.email, hashedPassword, userData.name]
-    );
-    
-    const user = new User(id, userData.email, hashedPassword, userData.name);
-    return user;
-  }
+    async register(userData) {
+        console.log('Registrando usuario:', userData); // ← Agrega esto
+        try {
+          const id = uuidv4();
+          const hashedPassword = await bcrypt.hash(userData.password, 10);
+          
+          console.log('Ejecutando query SQL...'); // ← Agrega esto
+          await pool.query(
+            'INSERT INTO users (id, email, password, name) VALUES (?, ?, ?, ?)',
+            [id, userData.email, hashedPassword, userData.name]
+          );
+          
+          console.log('Usuario registrado exitosamente'); // ← Agrega esto
+          return new User(id, userData.email, hashedPassword, userData.name);
+          
+        } catch (error) {
+          console.error('Error en AuthServiceImpl.register:', error); // ← Mejora este log
+          throw error;
+        }
+      }
+      async checkUserExists(email) {
+        const [rows] = await pool.query(
+          'SELECT 1 FROM users WHERE email = ? LIMIT 1',
+          [email]
+        );
+        return rows.length > 0;
+      }
   
   async login(email, password) {
     // Buscar el usuario por email
