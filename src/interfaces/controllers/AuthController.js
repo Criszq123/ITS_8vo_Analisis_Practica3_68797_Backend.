@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+/// Importar el servicio de autenticación y los casos de uso
 const AuthServiceImpl = require('../../infrastructure/services/AuthServiceImpl');
 const RegisterUseCase = require('../../core/useCases/RegisterUseCase');
 const LoginUseCase = require('../../core/useCases/LoginUseCase');

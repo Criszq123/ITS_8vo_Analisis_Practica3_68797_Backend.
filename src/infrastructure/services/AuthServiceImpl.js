@@ -5,7 +5,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid'); // Para generar UUID
 
+/// Implementación del servicio de autenticación
+/// Esta clase implementa la interfaz AuthService y proporciona
+
 class AuthServiceImpl extends AuthService {
+    /// Constructor de la clase AuthServiceImpl
     async register(userData) {
         console.log('Registrando usuario:', userData); // ← Agrega esto
         try {
@@ -26,6 +30,10 @@ class AuthServiceImpl extends AuthService {
           throw error;
         }
       }
+
+      // verifica si el correo electrónico ya existe en la base de datos
+      // y devuelve un booleano indicando si el usuario ya existe. 
+        //en caso de que ya exista, lanza un error.
       async checkUserExists(email) {
         const [rows] = await pool.query(
           'SELECT 1 FROM users WHERE email = ? LIMIT 1',
@@ -34,13 +42,17 @@ class AuthServiceImpl extends AuthService {
         return rows.length > 0;
       }
   
+      /// Método para iniciar sesión
+        /// Este método recibe las credenciales del usuario y devuelve un token JWT si las credenciales son válidas.
+        /// Debe ser implementado por el adaptador correspondiente.
+
   async login(email, password) {
     // Buscar el usuario por email
     const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
     if (rows.length === 0) {
       throw new Error("Usuario no encontrado");
     }
-    
+    // Obtener el primer registro (debería ser único por email)
     const userRecord = rows[0];
     // Comparar la contraseña ingresada con la almacenada
     const valid = await bcrypt.compare(password, userRecord.password);
