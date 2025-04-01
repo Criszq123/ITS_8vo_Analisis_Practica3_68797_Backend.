@@ -1,7 +1,9 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const authController = require('./src/interfaces/controllers/AuthController');
 
+app.use(cors()); // Habilitar CORS para todas las rutas
 // Middleware para parsear JSON
 app.use(express.json());
 
