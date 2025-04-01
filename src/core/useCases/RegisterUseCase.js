@@ -18,7 +18,7 @@ class RegisterUseCase {
         console.log('RegisterUseCase execute called with:', userData);
         // Verifica que los datos del usuario contengan los campos requeridos
       // y que la contraseña tenga al menos 6 caracteres.
-      const requiredFields = ['name', 'email', 'password'];
+      const requiredFields = ['name',"lastName", 'email', 'password'];
       const missingFields = requiredFields.filter(field => !userData[field]);
   
       console.log("campos faltantes", missingFields)
@@ -43,6 +43,7 @@ class RegisterUseCase {
           id: newUser.id,
           email: newUser.email,
           name: newUser.name,
+          lastName: newUser.lastName,
           createdAt: newUser.createdAt
         };
       } catch (error) {

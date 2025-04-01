@@ -18,8 +18,8 @@ class AuthServiceImpl extends AuthService {
           
           console.log('Ejecutando query SQL...'); // ← Agrega esto
           await pool.query(
-            'INSERT INTO users (id, email, password, name) VALUES (?, ?, ?, ?)',
-            [id, userData.email, hashedPassword, userData.name]
+            'INSERT INTO users (id, email, password, name, lastName) VALUES (?, ?, ?, ?, ?)',
+            [id, userData.email, hashedPassword, userData.name ,userData.lastName]
           );
           
           console.log('Usuario registrado exitosamente'); // ← Agrega esto
