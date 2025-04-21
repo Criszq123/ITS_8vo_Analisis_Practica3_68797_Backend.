@@ -16,15 +16,23 @@ const handleAsync = (fn) => (req, res, next) => {
 };
 
 // Endpoints
+/**
+ * @route POST /register
+ * @desc Registra un nuevo usuario. Soporta el campo 'role' ('user', 'admin', 'tecnico').
+ * @access Público
+ */
 router.post('/register', handleAsync(async (req, res) => {
   const user = await registerUseCase.execute(req.body);
   res.status(201).json({ 
     success: true,
-    message: 'Usuario registrado exitosamente', 
-    data: user 
   });
 }));
 
+/**
+ * @route POST /login
+ * @desc Inicia sesión y retorna el token junto con los datos del usuario, incluyendo el campo 'role'.
+ * @access Público
+ */
 router.post('/login', handleAsync(async (req, res) => {
   const { email, password } = req.body;
   const authData = await loginUseCase.execute(email, password);

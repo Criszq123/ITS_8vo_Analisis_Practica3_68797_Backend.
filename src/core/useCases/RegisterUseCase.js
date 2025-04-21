@@ -1,7 +1,14 @@
 //metodo para registrar un nuevo usuario
 // este archivo define el caso de uso de registro
 
+/**
+ * Caso de uso para registrar un nuevo usuario.
+ * Permite definir el rol del usuario ('user', 'admin', 'tecnico').
+ */
 class RegisterUseCase {
+    /**
+     * @param {AuthService} authService - Servicio de autenticación que implementa el registro.
+     */
     constructor(authService) {
         /// Verifica que el servicio de autenticación esté implementado
       // y que tenga el método register definido.
@@ -14,37 +21,39 @@ class RegisterUseCase {
 
     /// Método para registrar un nuevo usuario
     /// Este método recibe un objeto con los datos del usuario y lo registra en el sistema.
+    /**
+     * Ejecuta el registro de un nuevo usuario.
+     * @param {Object} userData - Datos del usuario (email, password, role).
+     * @param {string} userData.email - Email del usuario.
+     * @param {string} userData.password - Contraseña del usuario.
+     * @param {string} [userData.role='user'] - Rol del usuario ('user', 'admin', 'tecnico').
+     * @returns {Object} Usuario registrado (id, email, role).
+     */
     async execute(userData) {
         console.log('RegisterUseCase execute called with:', userData);
         // Verifica que los datos del usuario contengan los campos requeridos
       // y que la contraseña tenga al menos 6 caracteres.
-      const requiredFields = ['name',"lastName", 'email', 'password'];
-      const missingFields = requiredFields.filter(field => !userData[field]);
-  
-      console.log("campos faltantes", missingFields)
-      if (missingFields.length > 0) {
-        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      const { email, password, role } = userData;
+      if (!email || !password) {
+        throw new Error('Faltan campos requeridos: email y password');
       }
-  //     Verifica que la contraseña tenga al menos 6 caracteres
-      if (userData.password.length < 6) {
+      // El campo role es opcional. Si no se envía, se usará 'user' por defecto.
+      if (password.length < 6) {
         throw new Error('Password must be at least 6 characters');
       }
-  
       try {
-        const existingUser = await this.authService.checkUserExists(userData.email);
+        const existingUser = await this.authService.checkUserExists(email);
         if (existingUser) {
           throw new Error('User already exists');
         }
-  
-        const newUser = await this.authService.register(userData);
-        // Log de éxito
-        //retorna el nuevo usuario registrado
+        // Solo pasa 'role' si está definido, para permitir que sea opcional
+        const registerPayload = role ? { email, password, role } : { email, password };
+        const newUser = await this.authService.register(registerPayload);
+        // Retorna el nuevo usuario registrado
         return {
           id: newUser.id,
           email: newUser.email,
-          name: newUser.name,
-          lastName: newUser.lastName,
-          createdAt: newUser.createdAt
+          role: newUser.role
         };
       } catch (error) {
         console.error('RegisterUseCase error:', error);
